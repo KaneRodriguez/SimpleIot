@@ -31,6 +31,11 @@
 			<locationURI>eZ430_WSM_ROOT/Applications/main_AP.c</locationURI>
 		</link>
 		<link>
+			<name>Applications/SimpleDevice.h</name>
+			<type>1</type>
+			<locationURI>eZ430_WSM_ROOT/Applications/SimpleDevice.h</locationURI>
+		</link>
+		<link>
 			<name>Applications/main_ED.c</name>
 			<type>1</type>
 			<locationURI>eZ430_WSM_ROOT/Applications/main_ED.c</locationURI>
