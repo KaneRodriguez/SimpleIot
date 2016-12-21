@@ -91,7 +91,6 @@
 //Version:  1.00
 //Comments: Initial Release Version
 //******************************************************************************
-#include <string.h>
 #include "bsp.h"
 #include "mrfi.h"
 #include "bsp_leds.h"
@@ -101,6 +100,15 @@
 #include "nwk_frame.h"
 #include "nwk.h"
 #include "virtual_com_cmds.h"
+
+#include <msp430.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "SimpleDevice.h"
+#include "SimpleMessage.h"
+#include "SimpleCommunication.h"
 
 /****************** COMMENTS ON ASYNC LISTEN APPLICATION ***********************
 Summary:
@@ -161,7 +169,6 @@ Solution overview:
 static void    checkChangeChannel(void);
 static void    changeChannel(void);
 
-__interrupt void ADC10_ISR(void);
 __interrupt void Timer_A (void);
 
 /*------------------------------------------------------------------------------
@@ -205,6 +212,11 @@ static uint8_t sChannel = 0;
 /*------------------------------------------------------------------------------
  * Main
  *----------------------------------------------------------------------------*/
+
+CSimpleCommunication console;
+CSimpleDevice device;
+SimpleMessage message;
+
 void main (void)
 {
   bspIState_t intState;
@@ -225,14 +237,35 @@ void main (void)
   /* Initialize serial port */
   COM_Init();
 
+  // initialize console (MUST BE DONE AFTER THE BOARD!!!!!)
+  initializeSimpleCommunication(&console);
+  initializeSimpleDevice(&device);
+  initializeSimpleMessage(&message);
+
   //Transmit splash screen and network init notification
-  TXString( (char*)splash, sizeof splash);
-  TXString( "\r\nInitializing Network....", 26 );
+  console.send("\r\n\n\n--------------------------------------------");
+  console.send("\r\n    ***   ***   *********                   ");
+  console.send("\r\n    ***  ***    ***   ****                  ");
+  console.send("\r\n    *** ***     ***   ****                  ");
+  console.send("\r\n    *******     *********                   ");
+  console.send("\r\n    *******     *******                     ");
+  console.send("\r\n    *** ***     *** ****                    ");
+  console.send("\r\n    ***  ***    ***  ****                   ");
+  console.send("\r\n    ***   ***   ***   ****                  ");
+  console.send("\r\n                                            ");
+  console.send("\r\n   A SimplciTi Extension By                 ");
+  console.send("\r\n                                            ");
+  console.send("\r\n   - Kane Rodriguez                         ");
+  console.send("\r\n                                            ");
+  console.send("\r\n--------------------------------------------\n\n");
+
+
+  console.send( "\r\nInitializing Application Point....");
 
   SMPL_Init(sCB);
 
   // network initialized
-  TXString( "Done\r\n", 6);
+  console.send( "Done\r\n" );
 
   /* green and red LEDs on solid to indicate waiting for a Join. */
   BSP_TURN_ON_LED1();
@@ -272,58 +305,20 @@ void main (void)
     // if it is time to measure our own temperature...
     if(sSelfMeasureSem)
     {
-      char msg [6];
-      char addr[] = {"HUB0"};
-      char rssi[] = {"000"};
-      int degC, volt;
-      volatile long temp;
-      int results[2];
 
-      /* Get temperature */
-      ADC10CTL1 = INCH_10 + ADC10DIV_4;       // Temp Sensor ADC10CLK/5
-      ADC10CTL0 = SREF_1 + ADC10SHT_3 + REFON + ADC10ON + ADC10IE + ADC10SR;
-      /* Allow ref voltage to settle for at least 30us (30us * 8MHz = 240 cycles)
-       * See SLAS504D for settling time spec
-       */
-      __delay_cycles(240);
-      ADC10CTL0 |= ENC + ADC10SC;             // Sampling and conversion start
-      __bis_SR_register(CPUOFF + GIE);        // LPM0 with interrupts enabled
-      results[0] = ADC10MEM;                  // Retrieve result
-      ADC10CTL0 &= ~ENC;
+        device.update(&device);
 
-      /* Get voltage */
-      ADC10CTL1 = INCH_11;                     // AVcc/2
-      ADC10CTL0 = SREF_1 + ADC10SHT_2 + REFON + ADC10ON + ADC10IE + REF2_5V;
-      __delay_cycles(240);
-      ADC10CTL0 |= ENC + ADC10SC;             // Sampling and conversion start
-      __bis_SR_register(CPUOFF + GIE);        // LPM0 with interrupts enabled
-      results[1] = ADC10MEM;                  // Retrieve result
+        message.package(&message,
+      		  device.deviceTemperatureF,
+  			  device.deviceVoltage,
+  			  device.devicePin3Voltage,
+  			  device.devicePin4Voltage);
 
-      /* Stop and turn off ADC */
-      ADC10CTL0 &= ~ENC;
-      ADC10CTL0 &= ~(REFON + ADC10ON);
+        message.update(&message);
 
-      /* oC = ((A10/1024)*1500mV)-986mV)*1/3.55mV = A10*423/1024 - 278
-       * the temperature is transmitted as an integer where 32.1 = 321
-       * hence 4230 instead of 423
-       */
-      temp = results[0];
-      degC = ((temp - 673) * 4230) / 1024;
-      if( (*tempOffset) != 0xFFFF )
-      {
-        degC += (*tempOffset);
-      }
+        console.send("\r\n");
 
-      temp = results[1];
-      volt = (temp*25)/512;
-
-      /* Package up the data */
-      msg[0] = degC&0xFF;
-      msg[1] = (degC>>8)&0xFF;
-      msg[2] = volt;
-
-      /* Send it over serial port */
-      transmitDataString(1, addr, rssi, msg );
+        console.sendJsonMsg(&console, &message);
 
       BSP_TOGGLE_LED1();
 
@@ -351,7 +346,20 @@ void main (void)
 
           SMPL_Ioctl(IOCTL_OBJ_RADIO, IOCTL_ACT_RADIO_SIGINFO, (void *)&sigInfo);
 
-          transmitData( i, sigInfo.sigInfo.rssi, (char*)msg );
+
+          // process the incoming message
+          message.process(&message, msg);
+
+          message.sender = (int) i;
+
+          // send output
+          console.send("\r\n");
+
+          console.sendJsonMsg(&console, &message);
+
+          message.sender = -1;
+
+          // transmitData( i, sigInfo.sigInfo.rssi, (char*)msg );
           BSP_TOGGLE_LED2();
 
           BSP_ENTER_CRITICAL_SECTION(intState);
@@ -383,7 +391,11 @@ void main (void)
   }
 
 }
-
+/*
+ * TODO: Make an application for couples where they can communicate their moods with each other, kind of like fbook, but for two people
+ *
+ *
+ */
 /* Runs in ISR context. Reading the frame should be done in the */
 /* application thread not in the ISR thread. */
 static uint8_t sCB(linkID_t lid)
@@ -465,15 +477,6 @@ static void checkChangeChannel(void)
   }
 #endif
   return;
-}
-
-/*------------------------------------------------------------------------------
-* ADC10 interrupt service routine
-------------------------------------------------------------------------------*/
-#pragma vector=ADC10_VECTOR
-__interrupt void ADC10_ISR(void)
-{
-  __bic_SR_register_on_exit(CPUOFF);        // Clear CPUOFF bit from 0(SR)
 }
 
 /*------------------------------------------------------------------------------

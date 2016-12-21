@@ -2,21 +2,61 @@
 #define SIMPLE_DEVICE_C
 
 #include <msp430.h>
+#include <string.h>
 
 #define NUMBER_OF_DEVICE_PINS 3
 
-typedef struct SimpleDevice {
+typedef struct CSimpleDevice {
 
 	double deviceVoltage;
-	int devicePins[NUMBER_OF_DEVICE_PINS];
+	double deviceTemperatureF;
 
-} SimpleDevice;
+	double devicePin3Voltage;
+	double devicePin4Voltage;
+	double devicePin5Voltage;
 
-void turnOffADC() {
-        /* Stop and turn off ADC */
-        ADC10CTL0 &= ~ENC;
-        ADC10CTL0 &= ~(REFON + ADC10ON);
+	void (*initialize)(struct CSimpleDevice* d);
+	void (*update)(struct CSimpleDevice* d);
+
+	double (*getDeviceVoltage)();
+	double (*getDevicePinVoltage)(int,double);
+	double (*getDeviceTemperatureF)();
+
+
+} CSimpleDevice;
+
+void initializeSimpleDevice(CSimpleDevice*);
+void turnOffADC();
+void startADC();
+void setupADC(int);
+double currentDeviceVoltage();
+double currentDevicePinVoltage(int, double);
+double currentDeviceTemperatureF();
+void updateDevice(CSimpleDevice*);
+
+void initializeSimpleDevice(CSimpleDevice* d) {
+	// give the device its functionality
+	d->getDeviceVoltage = &currentDeviceVoltage;
+	d->getDevicePinVoltage = &currentDevicePinVoltage;
+	d->getDeviceTemperatureF = &currentDeviceTemperatureF;
+	d->update = &updateDevice;
+
+	// update the values of the device
+	d->update(d);
 }
+void updateDevice(CSimpleDevice* d) {
+
+	// update voltage and temperature
+	d->deviceVoltage = d->getDeviceVoltage();
+	d->deviceTemperatureF = d->getDeviceTemperatureF();
+
+	// update device pin voltages
+	d->devicePin3Voltage = d->getDevicePinVoltage(3, d->deviceVoltage);
+	d->devicePin4Voltage = d->getDevicePinVoltage(4, d->deviceVoltage);
+	d->devicePin5Voltage = d->getDevicePinVoltage(5, d->deviceVoltage);
+}
+
+
 double currentDeviceVoltage() {
         volatile int volt;
         volatile long adcValue;
@@ -35,6 +75,12 @@ double currentDeviceVoltage() {
 
         return ( ( (double) volt ) / 10 );
 }
+void turnOffADC() {
+        /* Stop and turn off ADC */
+        ADC10CTL0 &= ~ENC;
+        ADC10CTL0 &= ~(REFON + ADC10ON);
+}
+
 void startADC() {
     ADC10CTL0 |= ENC + ADC10SC;
     /*
