@@ -103,7 +103,6 @@
 
 #include <msp430.h>
 #include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "SimpleDevice.h"

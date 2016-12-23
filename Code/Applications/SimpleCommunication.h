@@ -21,6 +21,7 @@
 void simpleTXString( char*);
 void setupRXTX();
 __interrupt void ADC10_ISR(void);
+char * custom_dtos(double value);
 
 typedef struct CSimpleCommunication {
 
@@ -41,7 +42,6 @@ void initializeSimpleCommunication(CSimpleCommunication* c) {
 	// setup device for xmission
 	setupRXTX();
 }
-char * custom_dtos(double value);
 
 char * custom_dtos(double value) {
 	// only need to handle 4 digits before and 4 after decimal place so, excuse this for being sloppy. Recommend implementing differently in the future
@@ -92,17 +92,17 @@ void sendJsonMessage(CSimpleCommunication * c, SimpleMessage * m) {
 	c->send("{");
 
 	// send device name
-    c->send("'deviceName':");
+    c->send("\"deviceName\":");
 
     if( m->sender != -1) {
     	tmp = custom_dtos(m->sender);
-    	c->send("'ED");
+    	c->send("\"ED");
     	c->send(tmp);
-    	c->send("'");
+    	c->send("\"");
     	free(tmp);
 
     } else {
-        c->send("'AP'");
+        c->send("\"AP\"");
     }
 
 
@@ -110,7 +110,7 @@ void sendJsonMessage(CSimpleCommunication * c, SimpleMessage * m) {
     // send device voltage
 	tmp = custom_dtos(m->messageDeviceVoltage);
 
-	c->send(",'deviceVoltage':'");
+	c->send(",\"deviceVoltage\":\"");
 	c->send(tmp);
 
 	free(tmp); // it was malloced withing the function
@@ -118,7 +118,7 @@ void sendJsonMessage(CSimpleCommunication * c, SimpleMessage * m) {
 	// send device temp
 	tmp = custom_dtos(m->messageDeviceTemperatureF);
 
-	c->send("','deviceTemperatureF':");
+	c->send("\",\"deviceTemperatureF\":\"");
 	c->send(tmp);
 
 	free(tmp); // it was malloced withing the function
@@ -126,7 +126,7 @@ void sendJsonMessage(CSimpleCommunication * c, SimpleMessage * m) {
 	// send device pin 3 voltage
 	tmp = custom_dtos(m->messageDevicePin3Voltage);
 
-	c->send("','devicePin3Voltage':'");
+	c->send("\",\"devicePin3Voltage\":\"");
 	c->send(tmp);
 
 	free(tmp); // it was malloced withing the function
@@ -134,13 +134,13 @@ void sendJsonMessage(CSimpleCommunication * c, SimpleMessage * m) {
 	// send device pin 4 voltage
 	tmp = custom_dtos(m->messageDevicePin4Voltage);
 
-	c->send("','devicePin4Voltage':'");
+	c->send("\",\"devicePin4Voltage\":\"");
 	c->send(tmp);
 
 	free(tmp); // it was malloced withing the function
 
    //  end object
-	c->send("'}");
+	c->send("\"}");
 
 }
 
@@ -160,6 +160,7 @@ void setupRXTX() {
 	  UCA0CTL1 &= ~UCSWRST;                     // **Initialize USCI state machine**
 	  IE2 |= UCA0RXIE;                          // Enable USCI_A0 RX interrupt
 }
+
 void simpleTXString( char* string )
 {
   int pointer;
@@ -171,6 +172,7 @@ void simpleTXString( char* string )
   }
 }
 
+
 /*------------------------------------------------------------------------------
  * ADC10 interrupt service routine
  *----------------------------------------------------------------------------*/
@@ -181,3 +183,19 @@ __interrupt void ADC10_ISR(void)
 }
 
 #endif /* CSIMPLECOMMUNICATION_H_ */
+
+/*------------------------------------------------------------------------------
+* USCIA interrupt service routine
+------------------------------------------------------------------------------*/
+#pragma vector=USCIAB0RX_VECTOR
+__interrupt void USCI0RX_ISR(void)
+{
+	CSimpleCommunication c;
+
+	initializeSimpleCommunication(&c);
+
+  char rx = UCA0RXBUF;
+
+  c.send("Command Received");
+
+}

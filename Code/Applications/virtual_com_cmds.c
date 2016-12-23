@@ -158,27 +158,4 @@ void transmitData(int addr, signed char rssi,  char msg[MESSAGE_LENGTH] )
   transmitDataString( degCMode, addrString, rssiString, msg );
 }
 
-/*------------------------------------------------------------------------------
-* USCIA interrupt service routine
-------------------------------------------------------------------------------*/
-#pragma vector=USCIAB0RX_VECTOR
-__interrupt void USCI0RX_ISR(void)
-{
-  char rx = UCA0RXBUF;
-  if ( rx == 'V' || rx == 'v' )
-  {
-    verboseMode = 1;
-  }
-  else if ( rx == 'M' || rx == 'm' )
-  {
-    verboseMode = 0;
-  }
-  else if ( rx == 'F' || rx == 'f' )
-  {
-    degCMode = 0;
-  }
-  else if ( rx == 'C' || rx == 'c' )
-  {
-    degCMode = 1;
-  }
-}
+

@@ -66,9 +66,10 @@ void main (void)
 
   char buffer[60];
 
-  sprintf(buffer, "\r\n\nInitial Device Voltage: %f", device.deviceVoltage);
-
-  console.send(buffer);
+	char * tmp = custom_dtos(device.deviceVoltage);
+	console->send("\r\n\nInitial Device Voltage: ");
+	console->send(tmp);
+	free(tmp); // it was malloced within the function
 
   /* Check flash for previously stored address */
   if(Flash_Addr[0] == 0xFF && Flash_Addr[1] == 0xFF &&
