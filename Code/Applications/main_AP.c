@@ -350,6 +350,7 @@ void main (void)
           message.process(&message, msg);
 
           message.sender = (int) i;
+          message.rssiStrength = calculateRssiStrength(sigInfo.sigInfo.rssi);
 
           // send output
           console.send("\r\n");
@@ -357,6 +358,7 @@ void main (void)
           console.sendJsonMsg(&console, &message);
 
           message.sender = -1;
+          message.rssiStrength = -1;
 
           // transmitData( i, sigInfo.sigInfo.rssi, (char*)msg );
           BSP_TOGGLE_LED2();

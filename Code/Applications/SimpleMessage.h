@@ -45,7 +45,8 @@ typedef   unsigned char   uint8_t;
 typedef struct SimpleMessage {
 	uint8_t messageContents[SIMPLE_MESSAGE_LENGTH];
 
-	int sender;
+	int sender; // only used at the receiving end!!
+	int rssiStrength; // only used at the receiving end!!
 
 	double messageDeviceVoltage;
 	double messageDeviceTemperatureF;
@@ -72,6 +73,7 @@ double currentMessageDevicePin3Voltage(SimpleMessage*);
 double currentMessageDevicePin4Voltage(SimpleMessage*);
 void packageSimpleMessage(SimpleMessage*, double, double, double, double);
 void processSimpleMessage(SimpleMessage* m, uint8_t msg[SIMPLE_MESSAGE_LENGTH]);
+signed int calculateRssiStrength(signed char rssi);
 
 void initializeSimpleMessage(SimpleMessage* m) {
 	m->getMessageDeviceVoltage = &currentMessageDeviceVoltage;
@@ -84,6 +86,7 @@ void initializeSimpleMessage(SimpleMessage* m) {
 	m->process =  &processSimpleMessage;
 
 	m->sender = -1;
+	m->rssiStrength = 0;
 }
 
 double currentMessageDeviceVoltage(SimpleMessage* m) {
@@ -170,5 +173,12 @@ void processSimpleMessage(SimpleMessage* m, uint8_t msg[SIMPLE_MESSAGE_LENGTH]) 
 
 	m->update(m);
 }
+signed int calculateRssiStrength(signed char rssi) {
+	  volatile signed int rssi_int;
+	  rssi_int = (signed int) rssi;
+	  rssi_int = rssi_int+128;
+	  rssi_int = (rssi_int*100)/256;
 
+	  return rssi_int;
+}
 #endif /* SIMPLEMESSAGE_H_ */

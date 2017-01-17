@@ -18,6 +18,8 @@
 #define MAX_JSON_NAMES 10
 #define MAX_JSON_VALUES 10
 
+#define MAX_RSSI 45 // achieved through some testing, an AP directly atop the AP had a 44
+
 void simpleTXString( char*);
 void setupRXTX();
 __interrupt void ADC10_ISR(void);
@@ -95,17 +97,34 @@ void sendJsonMessage(CSimpleCommunication * c, SimpleMessage * m) {
     c->send("\"deviceName\":");
 
     if( m->sender != -1) {
+    	// this is one of the end devices
     	tmp = custom_dtos(m->sender);
     	c->send("\"ED");
     	c->send(tmp);
     	c->send("\"");
     	free(tmp);
 
+    	// send signal strength
+    	tmp = custom_dtos(m->rssiStrength);
+
+    	c->send(",\"rssiStrength\":\"");
+    	c->send(tmp);
+    	c->send("\"");
+
+    	free(tmp); // it was malloced withing the function
     } else {
+    	// this is the application point
         c->send("\"AP\"");
+
+    	// send signal strength
+    	tmp = custom_dtos(MAX_RSSI);
+
+    	c->send(",\"rssiStrength\":\"");
+    	c->send(tmp);
+    	c->send("\"");
+
+    	free(tmp); // it was malloced withing the function
     }
-
-
 
     // send device voltage
 	tmp = custom_dtos(m->messageDeviceVoltage);
