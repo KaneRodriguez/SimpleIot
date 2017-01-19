@@ -63,10 +63,11 @@ var nodesRef = dbRef.child('nodes')
 		In the future we have to handle the following:
 		- New node added to the list
 		- New node value added to a node
+		
+		// need to set limit on number of items in charts
 */
 // New Node added to the list
 nodesRef.on("child_added", function(snapshot,prevChildKey) {
-	console.log(snapshot);
     snapshot.forEach(function(childSnapshot) {
 			var key = snapshot.key();
 			
