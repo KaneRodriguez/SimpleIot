@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "wireless-sensor-nodes",
+  "private_key_id": "3eb6a9c4f1e335bc1e2c2a5fa3bc99e11acc5c95",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQC+bHSSj9GJncvA\n41pBrRN8N4F+I2bnk+YjrjrMAY+1Cg05uQaPZ7K5ePNuipqJcs4Bt6dnM91QkSQb\ngmEPBXesj4hL+5c2Rn/Vvg6tEpKr+Ndi+kpUjGRhEQJSrWwfLKBPMZI8VoDg+4YU\nzQWR5w/31l2fWKVFcuAPdl0/p1MN08ulNmh3cSK86HmUsEJxcZorJWPYLxhWVr44\nS0Y+yA0ppDfNydaiN/BmZ+JyYc3YXiS2hbJEIaeujqgBqKBzHqJ8finILHx98Unw\ngNOQAf83SKhH61LmyLC3w6RwhQ49rnet49AZc0pnh+XCzpQ+bSkBkPuX3/qEDIWX\n+FKzoJZTAgMBAAECggEBAKj7ud8t/XawL1Z262uI2dfLsgBsDi/Hkd1sCgVsBUlV\nKDNnPKkaDwKEkRIxsb3zwVjIz6fH4MhUZMR8yQD5ix/5J6y2EZQ6r8rQJFn2N26h\nHxJYpomtJI729ybDe0WW5pQgm3MsGKaOzoe7AQxfDk6TTvXPRqsArFFMaqfIJu4G\n0NaI7zpgm40VmyJJ/LiP84NPCBeq7QIVWuGgngsT9KR92CwaoHNYpaMV45s1dBrm\nDA4l5DXzXS0pHaQDuehhX4Af00ZVtEmOvXrkW3epqs8/j9GgPiJB6wyMYrJiPach\ns030ZNDD5Pbp7a5VByzFsaC3j1YssWP8FAJO1G7p97ECgYEA+VZSKBfH+MsVmkf6\ndBjLkDT4AVNHbtcBquxC9/QA5aA9RrU37qOnt2Mvk+MGjiQTI+XZSQyESoJJnYvo\nT8jJE8CAlkeZQIdjhMEtyI5zStT3DUhPfC/eCSmSPXoyXHmvLNd65lZI/IL0L0zK\nn6uRp9GfIzYpFyPhXgGkzcfiSZ8CgYEAw4MdlyLfZPTfnDCzc3bZzcQOVA+BH6Dm\nHEo624nY0xKu8YuRYmZaYCMQjjkKjtsdv5shVIDIiCibKbmzQnt3jH3bj8uT2QXM\nD1taF9U1bNnKdOZpnX9o3/VEn7Bx12UdZhPQ9+VWdJ3KxtNkZGge9MJaKu8rq38H\nDRPusDNVHs0CgYEAgeLx0WjyByzkCAbO9YOlJ24wc6BKafcfK0cAa+J0RSqAQUFN\n7cbbK7FDq6psU8d/IQgvdNpMX/QXHTcwwb864Es7sQ2DTBY7RYDMtNlgPe9K82Rj\n47Gb3PIG+HebnIjXNGjb4Pm587DUO3+pXhwmOGH+oH0qUp+iWzJIA9rIiskCgYBc\nZAeFtmsPEFDjRHho5g9DF5UV0EXapnRXhhSOTnPyOvAFIUlQ0MGAkNFwBDCjFZTX\nSP3VKw6YmWfJrgGyNxplf8xUBYYWlpC56ReID68xgzITUBc04FK1Evic5grGGPht\nlou3ud7DORXsI1VbxYBrdbSaeW+PmXXBjlvLVFazOQKBgQDGDP6xr/OYU30ujqTZ\nlIRRUkspv2ou9JL4lzH1eR/hI0eKClER5Z85U8pMqk1jiNq1kL3umKP5BNTLKr4l\n/ATVatbxoaYxJOJri2kMhcuSZX3FNqO70vppWDArq/Q0OS8kpHViTBjh6rDKLmFh\nXk8JKzU20h3zuGLIM1O5Mcdl+A==\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-sb5mh@wireless-sensor-nodes.iam.gserviceaccount.com",
+  "client_id": "115611164296759722389",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-sb5mh%40wireless-sensor-nodes.iam.gserviceaccount.com"
+}
