@@ -66,6 +66,7 @@ var nodesRef = dbRef.child('nodes')
 */
 // New Node added to the list
 nodesRef.on("child_added", function(snapshot,prevChildKey) {
+	console.log(snapshot);
     snapshot.forEach(function(childSnapshot) {
 			var key = snapshot.key();
 			
