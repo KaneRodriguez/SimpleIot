@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -44,67 +45,7 @@
 var dbRef = new Firebase("https://wireless-sensor-nodes.firebaseio.com/");
 var nodesRef = dbRef.child('nodes')
 	
-
-/* Current Structure
-
-	- nodes
-		* A0000
-			- sdflkljk
-				* Property : value
-				* Property : value
-				* Property : value
-				.
-				.
-				.
-			- 2r3edfns
-			.
-			.
-			.
-		* ED0000
-		* ED0001
-
-
-
-
-		In the future we have to handle the following:
-
-		- New node added to the list
-		- New node value added to a node
-*/
-
-// New Node added to the list
-
-nodesRef.on("child_added", function(snapshot,prevChildKey) {
-    snapshot.forEach(function(childSnapshot) {
-			var key = snapshot.key();
-			
-
-			nodesRef.child(key).on("child_added", function(newChildSnapshot) {
-
-				var object = newChildSnapshot.val();
-
-				if(object["C02 (PPM)"]) {
-					var timeStamp = new Date(object.timeStamp);
-					var time = timeStamp.getHours() + ":" + timeStamp.getMinutes() + ":" + timeStamp.getSeconds();
-					co2Chart.addChartData(object["C02 (PPM)"], time);
-				}
-				if(object["Humidity (RH)"]) {
-					var timeStamp = new Date(object.timeStamp);
-					var time = timeStamp.getHours() + ":" + timeStamp.getMinutes() + ":" + timeStamp.getSeconds();
-					humidityChart.addChartData(object["Humidity (RH)"], time);
-				}
-			});
-
-
-
-    });
-});
-
-
-
-
-
-/* load in the current data
+// load in the current data
 nodesRef.once('value', function(snapshot) {
 	snapshot.forEach(function(childSnapshot) {
 		childSnapshot.forEach(function(childsChildSnapshot) {
@@ -124,12 +65,6 @@ nodesRef.once('value', function(snapshot) {
 		});
 	});
 });
-*/
-
-
-
-
-
 
 var co2Chart = new SensorChart(document.getElementById("co2Chart"), "CO2 Levels", "Time", "C02 Concentration (PPM)");
 var humidityChart = new SensorChart(document.getElementById("humidityChart"), "Humidity Levels", "Time", "Humidity Concentration (RH)");
