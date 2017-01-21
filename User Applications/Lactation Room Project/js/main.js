@@ -96,7 +96,8 @@ function updateSimpleHighCharts(object) {
 	var humidityLevel = object["Humidity (RH)"];
 	var temperatureLevel = object["deviceTemperatureF"]; // subject to change the name
 	var timeStamp = new Date(object.timeStamp);
-	var time = timeStamp.getHours() % 12 + ":" + timeStamp.getMinutes() + ":" + timeStamp.getSeconds() + ( timeStamp.getHours() < 12 ? " am": " pm" );
+
+	var time = getStringTime(timeStamp);
 	
 	if(object["deviceName"] != "AP") { // the AP has a warmer temp due to its heavy amount of processing
 		
@@ -111,7 +112,17 @@ function updateSimpleHighChart(chart, newValue, meter, chartDOM, time) {
 	meter.updateReading(chart.myPoint.y, chart.getComfortability(), chart.getCurrentComfortColor(), time);
 	chartDOM.css({border: '.3em solid ' + chart.getCurrentComfortColor()});	
 }
+function getStringTime(timeStamp) {
+	var minutes = timeStamp.getMinutes();
+	var seconds = timeStamp.getSeconds();
+	var hours = timeStamp.getHours()%12;	
+	return hours+':'+str_pad_left(minutes,'0',2)+':'+str_pad_left(seconds,'0',2) + (timeStamp.getHours() < 12? " am": " pm");
+}
+function str_pad_left(string,pad,length) {
+    return (new Array(length+1).join(pad)+string).slice(-length);
+}
 
+var finalTime = str_pad_left(minutes,'0',2)+':'+str_pad_left(seconds,'0',2);
 function initializeData() {
 
 	nodesRef.once('value', function(snapshot) {
