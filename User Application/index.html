@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.6.3/firebase.js"></script>
+<script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
+
+
+
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="js/SimpleHighChart.js"></script>
+
+<style>
+	.meter {
+		min-width: 285px; 
+		max-width: 400px; 
+		height: 250px; 
+		margin: 0 auto;
+		border-radius: .8em;
+		margin: .2em;
+	}
+	@media all and (max-width: 55em) {
+		.my-breakpoint .ui-block-a, 
+		.my-breakpoint .ui-block-b, 
+		.my-breakpoint .ui-block-c,
+		.my-breakpoint .ui-block-d,
+		.my-breakpoint .ui-block-e { 
+			width: 100%; 
+			float:none; 
+		}
+	}	
+	th {
+		border-bottom: 1px solid #d6d6d6;
+	}
+</style>
+</head>
+<body>
+
+<div data-role="page" id="pageone">
+  <div data-role="panel" id="myPanel"> 
+    <h2>Settings</h2>
+      <fieldset data-role="controlgroup" id="hideSections">
+      <legend>Hide Sections:</legend>
+        <label for="showAll">Show All</label>
+        <input type="radio" name="hide" id="showAll" value="show">
+        <label for="hideTable">Hide Table</label>
+        <input type="radio" name="hide" id="hideTable" value="table">
+        <label for="hideMeters">Hide Meters</label>
+        <input type="radio" name="hide" id="hideMeters" value="meters">
+      </fieldset>
+  </div> 
+
+<div data-role="header">
+	<h1>SIUC Lactation Room</h1>
+	<a href="#myPanel" data-icon="bars" class="ui-btn-left">Settings</a>
+</div>
+
+  <div data-role="main" class="ui-content">
+  	<div class=" ui-icon-bars"></div>
+
+	<h2>Comfortability Status</h2>
+	 <table data-role="table" data-mode="columntoggle" class="ui-responsive ui-shadow meterReadings" id="myTable">
+		  <thead>
+			<tr>
+			  <th data-priority="2">Type</th>
+			  <th data-priority="1">Comfort Level</th>
+			  <th data-priority="3">Value</th>
+			  <th data-priority="4">Units</th>
+			  <th data-priority="5">Last Updated</th>
+			</tr>
+		  </thead>
+		  <tbody>
+		  </tbody>
+		</table>
+	<div class="ui-grid-b my-breakpoint" id="myMeters">
+		<div class="ui-block-a"><div id="temperatureChart" class="meter"></div></div>
+		<div class="ui-block-b"><div id="humidityChart" class="meter"></div></div>
+		<div class="ui-block-c"><div id="co2Chart" class="meter"></div></div>
+	</div><!-- /grid-b -->
+	</div>
+
+  <div data-role="footer">
+    <h1>SIUC Lactation Room</h1>
+  </div> 
+</div> 
+<script src="js/main.js"></script>
+<script>
+var CurrentSelection;
+$(document).ready(function() {
+    $("#hideSections input").on('change', function(){
+        var clicked = $(this).val();
+        if (clicked != CurrentSelection){
+			if(clicked == "table") {
+				$("#myMeters").show();
+				$("#myTable").hide();		
+			} else if( clicked == "meters") {
+				$("#myMeters").hide();
+				$("#myTable").show();
+			} else {
+				$("#myMeters").show();
+				$("#myTable").show();			
+			}
+            
+        }
+    });
+});
+
+</script>
+</body>
+</html>
