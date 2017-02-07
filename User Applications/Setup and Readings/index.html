@@ -26,6 +26,7 @@
 
 	
 <canvas id="co2Chart" width="50" height="15"></canvas>
+<canvas id="lightChart" width="50" height="15"></canvas>	
 <canvas id="humidityChart" width="50" height="15"></canvas>	
 	
 	
@@ -42,73 +43,38 @@
   firebase.initializeApp(config);
 	
 var dbRef = new Firebase("https://wireless-sensor-nodes.firebaseio.com/");
-var nodesRef = dbRef.child('nodes')
+var nodesRef = dbRef.child('environmental-hazard-experiment/nodes')
 	
-/* Current Structure
-	- nodes
-		* A0000
-			- sdflkljk
-				* Property : value
-				* Property : value
-				* Property : value
-				.
-				.
-				.
-			- 2r3edfns
-			.
-			.
-			.
-		* ED0000
-		* ED0001
-		In the future we have to handle the following:
-		- New node added to the list
-		- New node value added to a node
-		
-		// need to set limit on number of items in charts
-*/
-// New Node added to the list
-nodesRef.on("child_added", function(snapshot,prevChildKey) {
-    snapshot.forEach(function(childSnapshot) {
-			var key = snapshot.key();
-			
-			nodesRef.child(key).on("child_added", function(newChildSnapshot) {
-				var object = newChildSnapshot.val();
-				if(object["C02 (PPM)"]) {
-					var timeStamp = new Date(object.timeStamp);
-					var time = timeStamp.getHours() + ":" + timeStamp.getMinutes() + ":" + timeStamp.getSeconds();
-					co2Chart.addChartData(object["C02 (PPM)"], time);
-				}
-				if(object["Humidity (RH)"]) {
-					var timeStamp = new Date(object.timeStamp);
-					var time = timeStamp.getHours() + ":" + timeStamp.getMinutes() + ":" + timeStamp.getSeconds();
-					humidityChart.addChartData(object["Humidity (RH)"], time);
-				}
-			});
-    });
-});
-/* load in the current data
+// load in the current data
 nodesRef.once('value', function(snapshot) {
 	snapshot.forEach(function(childSnapshot) {
-		childSnapshot.forEach(function(childsChildSnapshot) {
-			var childKey = childsChildSnapshot.key();
-			var childData = childsChildSnapshot.val();
-			if(childData["C02 (PPM)"]) {
-				var timeStamp = new Date(childData.timeStamp);
-				var time = timeStamp.getHours() + ":" + timeStamp.getMinutes() + ":" + timeStamp.getSeconds();
-				co2Chart.addChartData(childData["C02 (PPM)"], time);
-			}
-			if(childData["Humidity (RH)"]) {
-				var timeStamp = new Date(childData.timeStamp);
-				var time = timeStamp.getHours() + ":" + timeStamp.getMinutes() + ":" + timeStamp.getSeconds();
-				humidityChart.addChartData(childData["Humidity (RH)"], time);
-			}
+		childSnapshot.ref().on('child_added', function(newSnapshot) {		
+				var childKey = newSnapshot.key();
+				var childData = newSnapshot.val();
+
+				if(childData["C02 (PPM)"]) {
+					var timeStamp = new Date(childData.timeStamp);
+					var time = timeStamp.getHours() + ":" + timeStamp.getMinutes() + ":" + timeStamp.getSeconds();
+					co2Chart.addChartData(childData["C02 (PPM)"], time);
+				}
+				if(childData["Humidity (RH)"]) {
+					var timeStamp = new Date(childData.timeStamp);
+					var time = timeStamp.getHours() + ":" + timeStamp.getMinutes() + ":" + timeStamp.getSeconds();
+					humidityChart.addChartData(childData["Humidity (RH)"], time);
+				}
+				if(childData["Light"]) {
+					var timeStamp = new Date(childData.timeStamp);
+					var time = timeStamp.getHours() + ":" + timeStamp.getMinutes() + ":" + timeStamp.getSeconds();
+					lightChart.addChartData(childData["Light"], time);
+				}
 		});
 	});
 });
-*/
+
 var co2Chart = new SensorChart(document.getElementById("co2Chart"), "CO2 Levels", "Time", "C02 Concentration (PPM)");
 var humidityChart = new SensorChart(document.getElementById("humidityChart"), "Humidity Levels", "Time", "Humidity Concentration (RH)");
-	// steph: 847 363 2243
+var lightChart = new SensorChart(document.getElementById("lightChart"), "Light Levels", "Time", "Voltage (V)");
+
 </script>
 </body>
 </html>
