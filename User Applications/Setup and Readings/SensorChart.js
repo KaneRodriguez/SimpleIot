@@ -8,13 +8,13 @@ var SensorChart = function(canvas, chartLabel, xLabel, yLabel) {
                 label: chartLabel,
                 fill: false,
                 lineTension: 0.1,
-                backgroundColor: "rgba(75,192,192,0.4)",
-                borderColor: "rgba(75,192,192,1)",
+                backgroundColor: "rgba(255,255,255,0.8)",
+                borderColor: "rgba(0,0,0,1)",
                 borderCapStyle: 'butt',
                 borderDash: [],
                 borderDashOffset: 0.0,
                 borderJoinStyle: 'miter',
-                pointBorderColor: "rgba(75,192,192,1)",
+                pointBorderColor: "rgba(0,0,0,1)",
                 pointBackgroundColor: "#fff",
                 pointBorderWidth: 1,
                 pointHoverRadius: 5,
@@ -31,16 +31,16 @@ var SensorChart = function(canvas, chartLabel, xLabel, yLabel) {
 	    showLines: true,
         scales: {
             yAxes: [{
-            scaleLabel: {
-                display: true,
-                labelString: yLabel
-            }
+		    scaleLabel: {
+			display: true,
+			labelString: yLabel
+		    }
             }],
             xAxes: [{
-            scaleLabel: {
-                display: true,
-                labelString: xLabel
-            }
+		scaleLabel: {
+			display: true,
+			labelString: xLabel
+		}
             }]
         }
     };
@@ -51,9 +51,12 @@ var SensorChart = function(canvas, chartLabel, xLabel, yLabel) {
 
     this.addChartData = function(value, label){
         var newIndex = itsChart.data.datasets[0].data.length;
-
+		var newLabel = label;
         itsChart.data.datasets[0].data[newIndex + 1] = value;
-        itsChart.data.labels[newIndex] = label;
+		if(!(newIndex % 4)) {
+			newLabel = "";
+		}
+		itsChart.data.labels[newIndex] = newLabel;
         itsChart.update();
     }
 }
