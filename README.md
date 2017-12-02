@@ -4,7 +4,7 @@ Connect Ultra Low-Power wireless nodes for data aggregation!
 
 <h2>Materials</h2?
 <ul>
-<li>Several MSP-430F2774's</li>
+<li>Several MSP-430F2274's</li>
 <li>Desktop Computer / Laptop</li>
 </ul>
 
